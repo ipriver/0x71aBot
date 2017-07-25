@@ -1,6 +1,7 @@
 package main
 
 import (
+	"config"
 	"fmt"
 	"net"
 	_ "reflect"
@@ -8,19 +9,13 @@ import (
 	"strings"
 )
 
-const (
-	HOST    string = "irc.twitch.tv"
-	NICK    string = "0x71aBot"
-	PORT    int    = 6667
-	PASS    string = "oauth:jdqnkc46wxl1cmr6s5klrq7hwkagiz"
-	CHANNEL string = "ipriver"
-)
-
 var (
+	config := config.LoadConfig()
 	buff []byte = make([]byte, 1024)
 )
 
 func main() {
+	
 	addr := strings.Join([]string{HOST, strconv.Itoa(PORT)}, ":")
 	conn, err := net.Dial("tcp", addr)
 	defer conn.Close()
@@ -42,9 +37,6 @@ func main() {
 			fmt.Println("We answered " + answer)
 		}
 		d := strings.Split(bStri, ":")
-		/*for i, v := range d {
-			fmt.Println(i, " ", v)
-		}*/
 		fmt.Println(d[len(d)-1])
 		if d[len(d)-1] == "!bot"+"\r\n" {
 			conn.Write([]byte("PRIVMSG #" + CHANNEL + " : Hello, i'm your bot :)\r\n"))

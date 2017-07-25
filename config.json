@@ -1,0 +1,7 @@
+{
+	"HostAddr": "irc.twitch.tv", 
+	"Port": 6667, 
+	"LoginName": "0x71aBot",
+	"LogOath": "oauth:jdqnkc46wxl1cmr6s5klrq7hwkagiz",
+	"Channel": "ipriver"
+}
