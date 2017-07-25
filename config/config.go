@@ -14,14 +14,14 @@ type Config struct {
 }
 
 func LoadConfig() (*Config, error) {
-	file, err := ioutil.ReadFile("../config.json")
+	file, err := ioutil.ReadFile("config.json")
 	if err != nil {
 		return nil, err
 	}
 	config := &Config{}
 	err = json.Unmarshal(file, config)
 	if err != nil {
-		fmt.Println("Error parsing JSON: ", err)
+		return nil, err
 	}
 	return config, nil
 }
