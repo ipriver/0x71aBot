@@ -13,18 +13,22 @@ func MonitorChannel(conn net.Conn, conf *config.Config) {
 		rb, _ := conn.Read(buff)
 		bStri := string(buff[:rb])
 		fmt.Println(bStri)
-		k := strings.Split(bStri, " ")
-
-		if k[0] == "PING" {
-			answer := "PONG " + k[1] + "\r\n"
-			conn.Write([]byte(answer))
-			fmt.Println("We answered " + answer)
+		err := AnswerToTwitch(strings.Split(bStri, " "), conn)
+		if err != nil {
+			fmt.Println("PING-PONG answer error occured")
 		}
 		d := strings.Split(bStri, ":")
-		fmt.Println(d[len(d)-1])
-		if d[len(d)-1] == "!bot"+"\r\n" {
-			conn.Write([]byte("PRIVMSG #" + conf.Channel + " : Hello, i'm your bot :)\r\n"))
-		}
+		mes := d[len(d)-1]
+		LookForCommands(mes, conn)
 	}
 
+}
+
+func AnswerToTwitch(mesString []string, conn net.Conn) error {
+	if mesString[0] == "PING" {
+		answer := "PONG " + mesString[1] + "\r\n"
+		conn.Write([]byte(answer))
+		fmt.Println("We answered " + answer)
+	}
+	return nil
 }
