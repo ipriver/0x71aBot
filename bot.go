@@ -3,6 +3,7 @@ package main
 import (
 	"config"
 	"fmt"
+	"monitor"
 	"net"
 	_ "reflect"
 	"strconv"
@@ -10,7 +11,6 @@ import (
 )
 
 var (
-	buff []byte = make([]byte, 1024)
 	conf *config.Config
 	err  error
 )
@@ -21,30 +21,28 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+	conn, err := CreateConnection(conf)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer func() {
+		fmt.Println("Connection closed")
+		conn.Close()
+	}()
+	monitor.MonitorChannel(conn, conf)
+
+}
+
+func CreateConnection(conf *config.Config) (net.Conn, error) {
 	addr := strings.Join([]string{conf.HostAddr, strconv.Itoa(conf.Port)}, ":")
 	conn, err := net.Dial("tcp", addr)
-	defer conn.Close()
+
 	if err != nil {
 		fmt.Println("connection error occured %v", err)
 	}
 	conn.Write([]byte("PASS " + conf.LogOath + "\r\n"))
 	conn.Write([]byte("NICK " + conf.LoginName + "\r\n"))
 	conn.Write([]byte("JOIN #" + conf.Channel + " \r\n"))
-	for {
-		rb, _ := conn.Read(buff)
-		bStri := string(buff[:rb])
-		fmt.Println(bStri)
-		k := strings.Split(bStri, " ")
-
-		if k[0] == "PING" {
-			answer := "PONG " + k[1] + "\r\n"
-			conn.Write([]byte(answer))
-			fmt.Println("We answered " + answer)
-		}
-		d := strings.Split(bStri, ":")
-		fmt.Println(d[len(d)-1])
-		if d[len(d)-1] == "!bot"+"\r\n" {
-			conn.Write([]byte("PRIVMSG #" + conf.Channel + " : Hello, i'm your bot :)\r\n"))
-		}
-	}
+	return conn, err
 }
