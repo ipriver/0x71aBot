@@ -1,5 +1,5 @@
 """
-WSGI config for twitchBot project.
+WSGI config for webBot project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "twitchBot.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "webBot.settings")
 
 application = get_wsgi_application()
