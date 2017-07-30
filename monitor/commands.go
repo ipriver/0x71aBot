@@ -1,7 +1,7 @@
 package monitor
 
 import (
-	"fmt"
+	_ "fmt"
 	"net"
 )
 
