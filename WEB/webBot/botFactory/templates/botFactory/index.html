@@ -1,0 +1,27 @@
+{% extends 'botFactory/base.html' %}
+  {% block header_styles %}
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'botFactory/styles/index.css' %}">
+  {% endblock %}
+{% block content %}
+  {% if authenticated %}
+  {% else %}
+    <div class="description">
+      <h1>Twitch 0x71Bot</h1>
+      <img class="logo" src="{% static 'botFactory/images/Bot-square.png' %}" alt="Bot-image">
+      <p>Добро пожаловать на сайт по управлению ботами для Twitch. Здесь вы можете подключать ботов для ваших каналов с разными конфигурациями и следить за их работой в режиме онлайн.</p>
+      
+      <p>0x71aBot - это бесплатный и открытый twitch-бот разрабатываемый на языке Go. Бот способен модерировать каналы, проводить опросы среди пользователей, выводить подсказки и многое другое. Все зависит от ваших персональных пожеланий.</p>
+      <p>Вам не нужно скачивать\устанавливать\компилировать самого бота, чтобы начать работать с ним. Для этого достаточно войти и создать вашего личного бота в пару кликов. Система все сделает за вас!</p>
+    </div>
+    <form class="signin_form form-horizontal" action="" method="post">
+      <p>Войдите, чтобы начать пользоваться ботом.</p>
+      {% csrf_token %}
+      {{ form }}
+      <div class="col-sm-offset-2 col-sm-10">
+        <input type="submit" value="Войти" />
+      </div>
+      <p>Нету аккаунта?</p><a href="">Зарегестрироваться</a>
+    </form>
+  {% endif %}
+{% endblock %}

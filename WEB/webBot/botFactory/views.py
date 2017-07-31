@@ -1,9 +1,22 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from .forms import SignInForm
+#from django.http import HttpResponse
 
 
 def test(request):
-    return HttpResponse('Неверная форма')
+    template_name = 'botFactory/index.html'
+    context = {
+        'message': '',
+        'authenticated': False,
+        'form': None,
+    }
+    if request.user.is_authenticated:
+        context['message'] = 'Hello, user'
+        context['authenticated'] = True
+    else:
+        context['message'] = 'Анонимный пользователь'
+        context['form'] = SignInForm()
+    return render(request, template_name, context)
 
 
 def register(request):

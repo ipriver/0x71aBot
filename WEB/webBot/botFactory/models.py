@@ -10,9 +10,11 @@ class User(models.Model):
 
 class Account(models.Model):
     user = models.ForeignKey(User)
-    bot_count = models.IntegerField()
+    bot_count = models.IntegerField(default=0)
     bot_list = 0
 
 
 class Bot(models.Model):
+    account = models.ForeignKey(Account)
     channel_name = models.CharField(max_length=50)
+    bot_start_time = models.DateField()
