@@ -1,6 +1,5 @@
 from django.shortcuts import render
-from .forms import SignInForm
-#from django.http import HttpResponse
+from .forms import SignInForm, RegForm
 
 
 def test(request):
@@ -20,4 +19,8 @@ def test(request):
 
 
 def register(request):
-    pass
+    template_name = 'botFactory/register.html'
+    context = {
+        'form': RegForm()
+    }
+    return render(request, template_name, context)

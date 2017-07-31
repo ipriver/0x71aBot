@@ -1,8 +1,8 @@
 {% extends 'botFactory/base.html' %}
-  {% block header_styles %}
-    {% load staticfiles %}
-    <link rel="stylesheet" type="text/css" href="{% static 'botFactory/styles/index.css' %}">
-  {% endblock %}
+{% block header_styles %}
+  {% load staticfiles %}
+  <link rel="stylesheet" type="text/css" href="{% static 'botFactory/styles/index.css' %}">
+{% endblock %}
 {% block content %}
   {% if authenticated %}
   {% else %}
@@ -21,7 +21,7 @@
       <div class="col-sm-offset-2 col-sm-10">
         <input type="submit" value="Войти" />
       </div>
-      <p>Нету аккаунта?</p><a href="">Зарегестрироваться</a>
+      <p>Нету аккаунта?</p><a href="{% url 'botFactory:register' %}">Зарегестрироваться</a>
     </form>
   {% endif %}
 {% endblock %}
