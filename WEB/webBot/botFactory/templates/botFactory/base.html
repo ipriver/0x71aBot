@@ -16,13 +16,14 @@
 	<!-- Bootstrap end -->
   {% load staticfiles %}
   <link rel="shortcut icon" type="image/png" href="{% static 'botFactory/images/favicon.png' %}"/>
+  <link rel="stylesheet" type="text/css" href="{% static 'botFactory/styles/base.css' %}">
 	{% block header_styles %}
 	{% endblock %}
 </head>
 <body class="container">
 	{% block content %}
 	{% endblock %}
-  <footer>
+  <footer class="text-center navbar-fixed-bottom">
     <a href="https://github.com/ipriver/0x71aBot">GitHub</a>
     <p>ipriver, 2017</p>
   </footer>

@@ -1,0 +1,12 @@
+a {
+	color: #88AF00;
+}
+
+a:hover {
+	color: #637a1c;
+	text-decoration: none;
+}
+
+.footer a{
+	display:inline;
+}
