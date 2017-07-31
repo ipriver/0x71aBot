@@ -4,7 +4,7 @@
   <link rel="stylesheet" type="text/css" href="{% static 'botFactory/styles/register.css' %}">
 {% endblock %}
 {% block content %}
-  <form class="signin_form form-horizontal" action="" method="post">
+  <form class="signin_form form-horizontal" action="user_register/" method="post">
     {% csrf_token %}
     {{ form }}
     <input type="submit" value="Зарегистрироваться"/>

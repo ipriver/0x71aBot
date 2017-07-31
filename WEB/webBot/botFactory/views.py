@@ -37,7 +37,7 @@ def sign_in(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-            return HttpResponseRedirect('/')
+                return HttpResponseRedirect('/')
     else:
         form = SignInForm()
         context = {
@@ -49,3 +49,20 @@ def sign_in(request):
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/')
+
+def user_register(request):
+    if request.method == 'POST':
+        form = RegForm(request.POST)
+        if form.is_valid():
+            login = request.POST['login']
+            email = request.POST['email']
+            password = request.POST['password']
+            re_password = request.POST['re_password']
+            if password == re_password:
+                user = User.objects.create_user(login, email, password)
+                user.save()
+                user = authenticate(request, username=login, password=password)
+                # if user is not None:
+                #     login(request, user)
+                #     #sreturn HttpResponseRedirect('/')
+    return HttpResponseRedirect('/register/')
