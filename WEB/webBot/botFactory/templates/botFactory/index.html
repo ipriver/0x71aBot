@@ -5,6 +5,10 @@
 {% endblock %}
 {% block content %}
   {% if authenticated %}
+    <form action="/logout/">
+      {{ message }}
+      <input type="submit" value="Logout" />
+    </form>
   {% else %}
     <main>
       <div class="description">
@@ -14,7 +18,7 @@
         <p>0x71aBot - это бесплатный и открытый twitch-бот разрабатываемый на языке Go. Бот способен модерировать каналы, проводить опросы среди пользователей, выводить подсказки и многое другое. Все зависит от ваших пожеланий.</p>
         <p>Вам не нужно загружать, устанавливать или настраивать самого бота, чтобы начать работать с ним. Для этого достаточно войти и создать вашего личного бота в пару кликов. Система все сделает за вас!</p>
       </div>
-      <form class="signin_form text-center" action="" method="post">
+      <form class="signin_form text-center" action="/sign_in/" method="post">
         <p>Войдите, чтобы начать пользоваться ботом.</p>
         {% csrf_token %}
         {% for elem in form %}

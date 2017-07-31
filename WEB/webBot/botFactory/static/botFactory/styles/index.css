@@ -27,7 +27,3 @@
 	font-size: 1rem;
 }
 
-/*hack*/
-form:first-child {
-	color: red;
-}
