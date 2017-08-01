@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .forms import SignInForm, RegForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth import logout
@@ -34,21 +34,20 @@ def sign_in(request):
         if form.is_valid():
             username = request.POST['login']
             password = request.POST['password']
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return HttpResponseRedirect('/')
-    else:
-        form = SignInForm()
-        context = {
-            'authenticated': False,
-            'form': form,
-        }
-    return render(request, template_name, context)
+            user_login(request, username, password)
+    return HttpResponseRedirect('/')
+
 
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/')
+
+
+def user_login(request, username, password):
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        login(request, user)
+
 
 def user_register(request):
     if request.method == 'POST':
@@ -61,8 +60,5 @@ def user_register(request):
             if password == re_password:
                 user = User.objects.create_user(login, email, password)
                 user.save()
-                user = authenticate(request, username=login, password=password)
-                # if user is not None:
-                #     login(request, user)
-                #     #sreturn HttpResponseRedirect('/')
-    return HttpResponseRedirect('/register/')
+                user_login(request, login, password)
+    return redirect('botFactory:index')
