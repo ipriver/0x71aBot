@@ -9,6 +9,15 @@
       {{ message }}
       <input type="submit" value="Logout" />
     </form>
+    <form class="addBotForm text-center" action="/add_new_bot/" method="post">
+      <p>Добавить бота на канал</p>
+      {% csrf_token %}
+      {{ form }}
+      <input type="submit" value="Добавить" />
+    </form>
+    {% for bot in bot_list %}
+      <p>{{ bot.channel_name }}</p>
+    {% endfor %}
   {% else %}
     <main>
       <div class="description">

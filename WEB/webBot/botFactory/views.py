@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
-from .forms import SignInForm, RegForm
+from .forms import SignInForm, RegForm, AddBotForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
+from .models import Account, Bot
 
 
 def index(request):
@@ -15,6 +16,11 @@ def index(request):
     if request.user.is_authenticated:
         context['message'] = 'Hello, ' + request.user.username
         context['authenticated'] = True
+        context['form'] = AddBotForm()
+        user = request.user
+        account = Account.objects.get(user=user)
+        bot_list = Bot.objects.filter(account=account)
+        context['bot_list'] = bot_list
     else:
         context['form'] = SignInForm()
     return render(request, template_name, context)
@@ -60,5 +66,23 @@ def user_register(request):
             if password == re_password:
                 user = User.objects.create_user(login, email, password)
                 user.save()
+                account = Account(user=user, bot_count=0)
+                account.save()
                 user_login(request, login, password)
+    return redirect('botFactory:index')
+
+
+def add_new_bot(request):
+    if request.method == 'POST':
+        form = AddBotForm(request.POST)
+        if form.is_valid():
+            channel_name = request.POST['channel_name']
+            user = request.user
+            account = Account.objects.get(user=user)
+            if account.bot_count < 5:
+                bot = Bot(account=account, channel_name=channel_name)
+                bot.bot_start()
+                account.bot_count += 1
+                account.save()
+                bot.save()
     return redirect('botFactory:index')

@@ -12,3 +12,8 @@ class RegForm(forms.Form):
     password = forms.CharField(label='Пароль:', min_length=5, max_length=50)
     re_password = forms.CharField(label='Пароль еще раз:', min_length=5,
                                   max_length=50)
+
+
+class AddBotForm(forms.Form):
+    channel_name = forms.CharField(label='Имя канала:', min_length=3,
+                                   max_length=30)
