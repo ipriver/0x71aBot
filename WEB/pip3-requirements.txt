@@ -1,5 +1,0 @@
-Django (1.11.3)
-pip (9.0.1)
-pytz (2017.2)
-setuptools (36.2.4)
-wheel (0.29.0)
