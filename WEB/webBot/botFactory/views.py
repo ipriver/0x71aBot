@@ -5,6 +5,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from .models import Account, Bot
+from django.views.decorators.csrf import csrf_exempt
 
 
 def index(request):
@@ -85,4 +86,18 @@ def add_new_bot(request):
                 account.bot_count += 1
                 account.save()
                 bot.save()
+    return redirect('botFactory:index')
+
+
+@csrf_exempt
+def del_bot(request):
+    if request.is_ajax:
+        user = request.user
+        account = Account.objects.get(user=user)
+        account.bot_count -= 1
+        bot_list = Bot.objects.filter(account=account)
+        bot = Bot.objects.all()
+        bot.filter(id=bot_list[0].id).delete()
+        account.save()
+
     return redirect('botFactory:index')
