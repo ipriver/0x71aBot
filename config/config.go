@@ -5,23 +5,29 @@ import (
 	"io/ioutil"
 )
 
-type Config struct {
-	HostAddr  string
-	Port      int
-	LoginName string
-	LogOath   string
-	Channel   string
+type GlobalConfig struct {
+	HostAddr     string `json:"host"`
+	Port         int    `json:"port"`
+	LoginBotName string `json:"botName"`
+	LogOath      string `json:"oath"`
 }
 
-func LoadConfig() (*Config, error) {
+type UserConfig struct {
+	GlobalConfig
+	Channel string `json:"channel"`
+}
+
+func LoadUserConfig(userDecoder *json.Decoder) (*UserConfig, error) {
 	file, err := ioutil.ReadFile("config.json")
 	if err != nil {
 		return nil, err
 	}
-	config := &Config{}
-	err = json.Unmarshal(file, config)
+	gc := GlobalConfig{}
+	err = json.Unmarshal(file, &gc)
+	uc := UserConfig{gc, ""}
+	err = userDecoder.Decode(&uc)
 	if err != nil {
 		return nil, err
 	}
-	return config, nil
+	return &uc, nil
 }
