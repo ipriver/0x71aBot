@@ -1,7 +1,7 @@
 package monitor
 
 import (
-	"config"
+	"../config"
 	"fmt"
 	"net"
 	"strings"
