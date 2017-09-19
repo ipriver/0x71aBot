@@ -1,16 +1,17 @@
 package monitor
 
 import (
+	"../config"
 	_ "fmt"
 	"net"
 )
 
-func SendToChannel(command string, conn net.Conn) {
+func SendToChannel(command string, conn net.Conn, conf *config.UserConfig) {
 	//PRIVMSG # + conf.Channel
-	conn.Write([]byte("PRIVMSG #" + "ipriver" + " : " + command + "\r\n"))
+	conn.Write([]byte("PRIVMSG #" + conf.Channel + " : " + command + "\r\n"))
 }
 
-func LookForCommands(message string, conn net.Conn) {
+func LookForCommands(message string, conn net.Conn, conf *config.UserConfig) {
 	command := ""
 
 	switch message {
@@ -21,7 +22,7 @@ func LookForCommands(message string, conn net.Conn) {
 		command = "@ipriver hi"
 	}
 	if command != "" {
-		SendToChannel(command, conn)
+		SendToChannel(command, conn, conf)
 	}
 
 }

@@ -15,7 +15,7 @@ func MonitorChannel(conn net.Conn, conf *config.UserConfig) {
 		fmt.Println(bStri)
 		d := strings.Split(bStri, ":")
 		mes := d[len(d)-1]
-		LookForCommands(mes, conn)
+		LookForCommands(mes, conn, conf)
 	}
 
 }
