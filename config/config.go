@@ -2,8 +2,11 @@ package config
 
 import (
 	"encoding/json"
+
 	"io/ioutil"
 )
+
+var err error
 
 type GlobalConfig struct {
 	HostAddr     string `json:"host"`

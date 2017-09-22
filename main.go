@@ -2,6 +2,7 @@ package main
 
 import (
 	"./bot"
+	"./config"
 	"net/http"
 )
 
@@ -13,4 +14,8 @@ func main() {
 		Handler: mux,
 	}
 	server.ListenAndServe()
+	defer func() {
+		config.Rc.Close()
+		config.Db.Close()
+	}()
 }
