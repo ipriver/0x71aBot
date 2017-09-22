@@ -20,15 +20,14 @@ type UserConfig struct {
 	Channel string `json:"channel"`
 }
 
-func LoadUserConfig(userDecoder *json.Decoder) (*UserConfig, error) {
+func LoadUserConfig(channel string) (*UserConfig, error) {
 	file, err := ioutil.ReadFile("config.json")
 	if err != nil {
 		return nil, err
 	}
 	gc := GlobalConfig{}
 	err = json.Unmarshal(file, &gc)
-	uc := UserConfig{gc, ""}
-	err = userDecoder.Decode(&uc)
+	uc := UserConfig{gc, channel}
 	if err != nil {
 		return nil, err
 	}

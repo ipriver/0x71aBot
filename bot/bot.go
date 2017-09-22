@@ -12,8 +12,8 @@ import (
 )
 
 type Bot struct {
-	BotUserId int
-	Config    *config.UserConfig
+	Bot_id int
+	Config *config.UserConfig
 }
 
 func (b *Bot) startBot() {
@@ -42,19 +42,30 @@ func (b *Bot) CreateConnection() (net.Conn, error) {
 	return conn, err
 }
 
+type UserJSONdata struct {
+	Bot_id  int    `json:"user_id"`
+	Channel string `json:"channel"`
+}
+
 func CreateBotHandler(rw http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case "POST":
-		userDecoder := json.NewDecoder(req.Body)
+		decoder := json.NewDecoder(req.Body)
 		defer req.Body.Close()
+		data := UserJSONdata{}
+		err := decoder.Decode(&data)
 
-		userConfig, err := config.LoadUserConfig(userDecoder)
+		bot := checkBotInCache(data.Bot_id)
+		if bot == nil {
+			fmt.Println("no cache")
+		}
+
+		userConfig, err := config.LoadUserConfig(data.Channel)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		//TODO: replace botid
-		bot := Bot{0, userConfig}
+		bot = &Bot{data.Bot_id, userConfig}
 		go bot.startBot()
 		rw.WriteHeader(200)
 	default:
