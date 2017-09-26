@@ -2,7 +2,7 @@ package config
 
 import (
 	"encoding/json"
-
+	"fmt"
 	"io/ioutil"
 )
 
@@ -15,18 +15,35 @@ type GlobalConfig struct {
 	LogOath      string `json:"oath"`
 }
 
+func (gc *GlobalConfig) Load() {
+	file, err := ioutil.ReadFile("config.json")
+	if err != nil {
+		panic(err)
+	}
+	err = json.Unmarshal(file, &gc)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (gc *GlobalConfig) Save() error {
+	js, _ := json.Marshal(gc)
+	err = ioutil.WriteFile("config.json", js, 0644)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 type UserConfig struct {
 	GlobalConfig
 	Channel string `json:"channel"`
 }
 
 func LoadUserConfig(channel string) (*UserConfig, error) {
-	file, err := ioutil.ReadFile("config.json")
-	if err != nil {
-		return nil, err
-	}
+	//Update with Load function
 	gc := GlobalConfig{}
-	err = json.Unmarshal(file, &gc)
+	gc.Load()
 	uc := UserConfig{gc, channel}
 	if err != nil {
 		return nil, err
