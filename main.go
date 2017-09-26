@@ -3,6 +3,7 @@ package main
 import (
 	"./bot"
 	"./config"
+	"./handlers"
 	"bufio"
 	"flag"
 	"fmt"
@@ -22,15 +23,17 @@ func main() {
 	case "config":
 		UpdateConfig()
 	default:
-		StartWebService()
+		WebService()
 	}
 }
 
+//Upgrades data in config.json
 func UpdateConfig() {
 	scanner := bufio.NewScanner(os.Stdin)
 	newconf := config.GlobalConfig{}
 	newconf.Load()
 
+	//working with user input
 	fmt.Printf("1)%s Enter new host adress:\n", newconf.HostAddr)
 	scanner.Scan()
 	newconf.HostAddr = scanner.Text()
@@ -69,21 +72,24 @@ func UpdateConfig() {
 
 }
 
-func StartWebService() {
+//Starts app as Web-Service, resp-req
+func WebService() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", bot.CreateBotHandler)
-	mux.HandleFunc("/bot_info/", bot.BotInfo)
+	mux.HandleFunc("/", handlers.CreateBotHandler)
+	mux.HandleFunc("/bot_info/", handlers.BotInfo)
 	server := &http.Server{
 		Addr:    "127.0.0.1:8080",
 		Handler: mux,
 	}
 	server.ListenAndServe()
+	//closing connection to DBs
 	defer func() {
 		config.Rc.Close()
 		config.Db.Close()
 	}()
 }
 
+//Starts one bot gourutine for personal use or debugging
 func Start() {
 
 }

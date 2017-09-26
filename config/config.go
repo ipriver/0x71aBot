@@ -8,6 +8,7 @@ import (
 
 var err error
 
+//main configuration data structure which is parsed from config.json
 type GlobalConfig struct {
 	HostAddr     string `json:"host"`
 	Port         int    `json:"port"`
@@ -15,6 +16,7 @@ type GlobalConfig struct {
 	LogOath      string `json:"oath"`
 }
 
+//loads data from config.json into the structure
 func (gc *GlobalConfig) Load() {
 	file, err := ioutil.ReadFile("config.json")
 	if err != nil {
@@ -26,6 +28,7 @@ func (gc *GlobalConfig) Load() {
 	}
 }
 
+//saves new data into config.json file
 func (gc *GlobalConfig) Save() error {
 	js, _ := json.Marshal(gc)
 	err = ioutil.WriteFile("config.json", js, 0644)
@@ -35,13 +38,14 @@ func (gc *GlobalConfig) Save() error {
 	return nil
 }
 
+//structure is used by Bot for creating new Bots stucts
 type UserConfig struct {
 	GlobalConfig
 	Channel string `json:"channel"`
 }
 
+//creates UserConfig struct and returns it
 func LoadUserConfig(channel string) (*UserConfig, error) {
-	//Update with Load function
 	gc := GlobalConfig{}
 	gc.Load()
 	uc := UserConfig{gc, channel}

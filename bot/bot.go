@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"../commands"
 	"../config"
 	"../monitor"
 	"encoding/json"
@@ -9,14 +10,23 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Bot struct {
-	Bot_id int
-	Config *config.UserConfig
+	Bot_id       int
+	Config       *config.UserConfig
+	Commands     []commands.Command
+	UpTime       time.Time
+	InnerChannel chan interface{}
 }
 
-func (b *Bot) startBot() {
+//function creates connection to Twitch and starts listening to the channel (runs as a goroutine)
+func (b *Bot) StartBot() {
+	//check in cache bot_id
+	//check in db bot_id
+	//if not create it in id
+	//run bot
 	conn, err := b.CreateConnection()
 	if err != nil {
 		fmt.Println(err)
@@ -29,6 +39,7 @@ func (b *Bot) startBot() {
 	monitor.MonitorChannel(conn, b.Config)
 }
 
+//twitch tcp\ip connection
 func (b *Bot) CreateConnection() (net.Conn, error) {
 	addr := strings.Join([]string{b.Config.HostAddr, strconv.Itoa(b.Config.Port)}, ":")
 	conn, err := net.Dial("tcp", addr)
@@ -40,35 +51,4 @@ func (b *Bot) CreateConnection() (net.Conn, error) {
 	conn.Write([]byte("NICK " + b.Config.LoginBotName + "\r\n"))
 	conn.Write([]byte("JOIN #" + b.Config.Channel + " \r\n"))
 	return conn, err
-}
-
-type UserJSONdata struct {
-	Bot_id  int    `json:"user_id"`
-	Channel string `json:"channel"`
-}
-
-func CreateBotHandler(rw http.ResponseWriter, req *http.Request) {
-	switch req.Method {
-	case "POST":
-		decoder := json.NewDecoder(req.Body)
-		defer req.Body.Close()
-		data := UserJSONdata{}
-		err := decoder.Decode(&data)
-
-		bot := checkBotInCache(data.Bot_id)
-		if bot == nil {
-			fmt.Println("no cache")
-		}
-
-		userConfig, err := config.LoadUserConfig(data.Channel)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		bot = &Bot{data.Bot_id, userConfig}
-		go bot.startBot()
-		rw.WriteHeader(200)
-	default:
-		rw.WriteHeader(404)
-	}
 }
