@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./bot"
+	"./cmd"
 	"./config"
 	"./handlers"
 	"bufio"
@@ -74,9 +74,12 @@ func UpdateConfig() {
 
 //Starts app as Web-Service, resp-req
 func WebService() {
+	//listens user input and calls functions
+	go cmd.ListenCMD()
+
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", handlers.CreateBotHandler)
-	mux.HandleFunc("/bot_info/", handlers.BotInfo)
+	mux.HandleFunc("/", handlers.RunBotHandler)
+	mux.HandleFunc("/bot_info/", handlers.InfoBotHandler)
 	server := &http.Server{
 		Addr:    "127.0.0.1:8080",
 		Handler: mux,
@@ -91,5 +94,7 @@ func WebService() {
 
 //Starts one bot gourutine for personal use or debugging
 func Start() {
-
+	/*userConfig, err := config.LoadUserConfig("ipriver")
+	ch := make(chan interface{})
+	newBot := &bot.Bot{1, userConfig, make([]commands.Command, 10), time.Now(), ch}*/
 }
