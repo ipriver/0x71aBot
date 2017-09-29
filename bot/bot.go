@@ -11,6 +11,8 @@ import (
 	"time"
 )
 
+var OnlineBots = make(map[string]*Bot)
+
 type Bot struct {
 	Bot_id       int
 	Config       *config.UserConfig
@@ -21,6 +23,11 @@ type Bot struct {
 
 //function creates connection to Twitch and starts listening to the channel (runs as a goroutine)
 func (b *Bot) StartBot() {
+	_, ok := OnlineBots[b.Config.Channel]
+	if ok == true {
+		fmt.Println("Bot is already online")
+		return
+	}
 	//check in cache bot_id
 	//check in db bot_id
 	//if not create it in id
@@ -34,6 +41,7 @@ func (b *Bot) StartBot() {
 		fmt.Println("Connection closed")
 		conn.Close()
 	}()
+	OnlineBots[b.Config.Channel] = b
 	monitor.MonitorChannel(conn, b.Config)
 }
 
@@ -49,4 +57,15 @@ func (b *Bot) CreateConnection() (net.Conn, error) {
 	conn.Write([]byte("NICK " + b.Config.LoginBotName + "\r\n"))
 	conn.Write([]byte("JOIN #" + b.Config.Channel + " \r\n"))
 	return conn, err
+}
+
+func (b *Bot) AddCommand() {
+	cm := commands.Command{}
+	//TODO: custom commands
+	cm.Constructor("exit", "no", false)
+	b.Commands = append(b.Commands, cm)
+}
+
+func (b *Bot) GetId() int {
+	return b.Bot_id
 }

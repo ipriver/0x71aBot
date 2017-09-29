@@ -39,8 +39,9 @@ func RunBotHandler(rw http.ResponseWriter, req *http.Request) {
 		//creates bot and runs it in a goroutine
 		ch := make(chan interface{})
 		currentTime := time.Now()
-		listOfUserCommands := make([]commands.Command, 10)
+		listOfUserCommands := make([]commands.Command, 0)
 		newBot := &bot.Bot{data.Bot_id, userConfig, listOfUserCommands, currentTime, ch}
+		newBot.AddCommand()
 		go newBot.StartBot()
 		//send to the client response code
 		rw.WriteHeader(200)

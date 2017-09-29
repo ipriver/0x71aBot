@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+var GlobalCD int = 5000
+
 type Command struct {
 	Name       string
 	Message    string
@@ -19,4 +21,12 @@ func (c *Command) Cooldown() {
 		time.Sleep(5 * time.Millisecond)
 		c.OnCooldown = false
 	}()
+}
+
+func (c *Command) Constructor(name string, mes string, privmsg bool) {
+	c.Name = name
+	c.Message = mes
+	c.PrivMSG = privmsg
+	c.OnCooldown = false
+	c.CDtime = GlobalCD
 }

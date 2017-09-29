@@ -87,6 +87,7 @@ func WebService() {
 	server.ListenAndServe()
 	//closing connection to DBs
 	defer func() {
+		fmt.Println("closed db connections")
 		config.Rc.Close()
 		config.Db.Close()
 	}()
