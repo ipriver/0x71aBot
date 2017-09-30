@@ -4,11 +4,22 @@ import ()
 
 type Command struct {
 	Name      string
-	innerFunc func(args ...interface{})
+	innerFunc interface{}
 }
 
-func (c *Command) Call() {
-	c.innerFunc()
+func (c *Command) Call(args ...interface{}) {
+	fv := reflect.ValueOf(c.innerFunc)
+	ft := fv.Type()
+	margs := ft.NumIn()
+	inv := make([]reflect.Value, margs)
+	for n := 0; n < margs; n++ {
+		if n < len(args) {
+			inv[n] = reflect.ValueOf(args[n])
+		} else {
+			inv[n] = reflect.Zero(ft.In(n))
+		}
+	}
+	outv := fv.Call(inv)
 }
 
 func (c *Command) Constructor(name string, f func(args ...interface{})) {
