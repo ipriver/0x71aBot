@@ -1,6 +1,8 @@
 package commands
 
-import ()
+import (
+	"reflect"
+)
 
 type Command struct {
 	Name      string
@@ -19,10 +21,10 @@ func (c *Command) Call(args ...interface{}) {
 			inv[n] = reflect.Zero(ft.In(n))
 		}
 	}
-	outv := fv.Call(inv)
+	fv.Call(inv)
 }
 
-func (c *Command) Constructor(name string, f func(args ...interface{})) {
+func (c *Command) Constructor(name string, f interface{}) {
 	c.Name = name
 	c.innerFunc = f
 }

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"./cmd"
 	"./config"
 	"./handlers"
+	"./monitor"
 	"bufio"
 	"flag"
 	"fmt"
@@ -75,7 +75,7 @@ func UpdateConfig() {
 //Starts app as Web-Service, resp-req
 func WebService() {
 	//listens user input and calls functions
-	go cmd.ListenCMD()
+	go monitor.ListenCMD()
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", handlers.RunBotHandler)

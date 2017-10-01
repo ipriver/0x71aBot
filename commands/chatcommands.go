@@ -20,8 +20,8 @@ func (c *ChatCommand) Cooldown() {
 	}()
 }
 
-func (c *ChatCommand) Constructor(name string, mes string, privmsg bool, cd int) {
-	c.Name = name
+func (c *ChatCommand) Constructor(name string, f interface{}, mes string, privmsg bool, cd int) {
+	c.Command.Constructor(name, f)
 	c.Message = mes
 	c.PrivMSG = privmsg
 	c.OnCooldown = false
@@ -33,5 +33,5 @@ func (c *ChatCommand) Call() {
 		return
 	}
 	c.Cooldown()
-	c.innerFunc()
+	c.Command.Call()
 }

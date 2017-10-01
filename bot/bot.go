@@ -16,7 +16,7 @@ var OnlineBots = make(map[string]*Bot)
 type Bot struct {
 	Bot_id       int
 	Config       *config.UserConfig
-	Commands     []commands.Command
+	Commands     []commands.ChatCommand
 	UpTime       time.Time
 	InnerChannel chan interface{}
 }
@@ -60,9 +60,9 @@ func (b *Bot) CreateConnection() (net.Conn, error) {
 }
 
 func (b *Bot) AddCommand() {
-	cm := commands.Command{}
+	cm := commands.ChatCommand{}
 	//TODO: custom commands
-	cm.Constructor("exit", "no", false)
+	cm.Constructor("exit", func() {}, "None", false, 3000)
 	b.Commands = append(b.Commands, cm)
 }
 

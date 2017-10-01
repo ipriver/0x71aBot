@@ -1,31 +1,27 @@
 package commands
 
-import (
-	"fmt"
-	"os"
-	"time"
-)
-
 type ConsoleCommand struct {
 	Command
 	description string
 	argument    string
 }
 
-func (c *ConsoleCommand) Constructor(name string, f func(args ...interface{}), descr string, arg string) {
+func (c *ConsoleCommand) Constructor(name string, f interface{}, descr string, arg string) {
 	c.Command.Constructor(name, f)
 	c.description = descr
 	c.argument = arg
 }
 
-var cmdExit = &ConsoleCommand{Command{"exit", programmExit}, "use to gently exit the programm", ""}
-var cmdStatus = &ConsoleCommand{Command{"status", getStatus}, "shows current status information of all bots", ""}
-var cmdStop = &ConsoleCommand{Command{"stop", notImplemented}, "stops user bot goroutine", ""}
-var cmdInfo = &ConsoleCommand{Command{"info", notImplemented}, "detailed information of channel bot", ""}
-var cmdRun = &ConsoleCommand{Command{"run", runCustomBot}, "creates new bot goroutine", ""}
-var cmdHelp = &ConsoleCommand{Command{"help", help}, "help information", ""}
+var (
+	cmdExit   = &ConsoleCommand{}
+	cmdStatus = &ConsoleCommand{}
+	cmdStop   = &ConsoleCommand{}
+	cmdInfo   = &ConsoleCommand{}
+	cmdRun    = &ConsoleCommand{}
+	cmdHelp   = &ConsoleCommand{}
+)
 
-var ConsoleCmdList = []*ConsoleCommand{
+var consoleCmdList = []*ConsoleCommand{
 	cmdExit,
 	cmdStatus,
 	cmdStop,
@@ -34,9 +30,28 @@ var ConsoleCmdList = []*ConsoleCommand{
 	cmdHelp,
 }
 
+func init() {
+	cmdExit.Constructor("exit", notImplemented, "use to gently exit the programm", "")
+	cmdStatus.Constructor("status", notImplemented, "shows current status information of all bots", "")
+	cmdStop.Constructor("stop", notImplemented, "stops user bot goroutine", "")
+	cmdInfo.Constructor("info", notImplemented, "detailed information of channel bot", "")
+	cmdRun.Constructor("run", notImplemented, "creates new bot goroutine", "")
+	cmdHelp.Constructor("help", notImplemented, "help information", "")
+
+}
+
+func FindConsoleCommand(name string) *ConsoleCommand {
+	for _, v := range consoleCmdList {
+		if v.Name == name {
+			return v
+		}
+	}
+	return nil
+}
+
 var notImplemented = func(args ...interface{}) {}
 
-func getStatus(args ...interface{}) {
+/*func getStatus(args ...interface{}) {
 	fmt.Printf("Online bots: %v\n", len(bot.OnlineBots))
 	for i, b := range bot.OnlineBots {
 		uptime := time.Since(b.UpTime)
@@ -72,3 +87,4 @@ func programmExit(args ...interface{}) {
 	//TODO: check and close all connections
 	os.Exit(0)
 }
+*/
