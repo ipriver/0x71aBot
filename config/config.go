@@ -62,8 +62,8 @@ func (gc *GlobalConfig) Save() error {
 
 //structure is used by Bot for creating new Bots stucts
 type UserConfig struct {
-	channel string `json:"channel"`
 	GlobalConfig
+	channel string `json:"channel"`
 }
 
 func (uc *UserConfig) GetChannel() string {
@@ -71,7 +71,7 @@ func (uc *UserConfig) GetChannel() string {
 }
 
 //loads data into struct
-func (uc *UserConfig) Load() error {
+func (uc *UserConfig) Load() {
 	gc := GlobalConfig{}
 	gc.Load()
 	uc.GlobalConfig = gc
