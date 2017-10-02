@@ -5,8 +5,12 @@ import (
 )
 
 type Command struct {
-	Name      string
+	name      string
 	innerFunc interface{}
+}
+
+type Commander interface {
+	Call()
 }
 
 func (c *Command) Call(args ...interface{}) {
@@ -25,6 +29,10 @@ func (c *Command) Call(args ...interface{}) {
 }
 
 func (c *Command) Constructor(name string, f interface{}) {
-	c.Name = name
+	c.name = name
 	c.innerFunc = f
+}
+
+func (c *Command) GetName() string {
+	return c.name
 }

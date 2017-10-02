@@ -1,7 +1,7 @@
 package monitor
 
 import (
-	"../commands"
+	"../commands/operations"
 	"bufio"
 	"fmt"
 	"os"
@@ -10,7 +10,7 @@ import (
 func ListenCMD() {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
-		res := commands.FindConsoleCommand(scanner.Text())
+		res := operations.FindConsoleCommand(scanner.Text())
 		if res != nil {
 			res.Call()
 		} else {

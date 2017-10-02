@@ -3,62 +3,30 @@ package commands
 type ConsoleCommand struct {
 	Command
 	description string
-	argument    string
+	arguments   []string
 }
 
-func (c *ConsoleCommand) Constructor(name string, f interface{}, descr string, arg string) {
+type ConsoleCommander interface {
+	Call()
+	GetDescr() string
+	GetArguments() []string
+}
+
+func (c *ConsoleCommand) GetDescr() string {
+	return c.description
+}
+
+func (c *ConsoleCommand) GetArguments() []string {
+	return c.arguments
+}
+
+func (c *ConsoleCommand) Constructor(name string, f interface{}, descr string, args []string) {
 	c.Command.Constructor(name, f)
 	c.description = descr
-	c.argument = arg
+	c.arguments = args
 }
 
-var (
-	cmdExit   = &ConsoleCommand{}
-	cmdStatus = &ConsoleCommand{}
-	cmdStop   = &ConsoleCommand{}
-	cmdInfo   = &ConsoleCommand{}
-	cmdRun    = &ConsoleCommand{}
-	cmdHelp   = &ConsoleCommand{}
-)
-
-var consoleCmdList = []*ConsoleCommand{
-	cmdExit,
-	cmdStatus,
-	cmdStop,
-	cmdInfo,
-	cmdRun,
-	cmdHelp,
-}
-
-func init() {
-	cmdExit.Constructor("exit", notImplemented, "use to gently exit the programm", "")
-	cmdStatus.Constructor("status", notImplemented, "shows current status information of all bots", "")
-	cmdStop.Constructor("stop", notImplemented, "stops user bot goroutine", "")
-	cmdInfo.Constructor("info", notImplemented, "detailed information of channel bot", "")
-	cmdRun.Constructor("run", notImplemented, "creates new bot goroutine", "")
-	cmdHelp.Constructor("help", notImplemented, "help information", "")
-
-}
-
-func FindConsoleCommand(name string) *ConsoleCommand {
-	for _, v := range consoleCmdList {
-		if v.Name == name {
-			return v
-		}
-	}
-	return nil
-}
-
-var notImplemented = func(args ...interface{}) {}
-
-/*func getStatus(args ...interface{}) {
-	fmt.Printf("Online bots: %v\n", len(bot.OnlineBots))
-	for i, b := range bot.OnlineBots {
-		uptime := time.Since(b.UpTime)
-		fmt.Printf("id: %d, Channel: %s, Uptime: %v\n", b.GetId(), i, uptime)
-	}
-}
-
+/*
 func runCustomBot(args ...interface{}) {
 	channel := args[0]
 	userConfig, err := config.LoadUserConfig(channel)
@@ -74,17 +42,4 @@ func runCustomBot(args ...interface{}) {
 	newBot.AddCommand()
 	fmt.Println(newBot)
 	go newBot.StartBot()
-}
-
-func help(args ...interface{}) {
-	fmt.Println("Avalibale commands:")
-	for i, c := range ConsoleCmdList {
-		fmt.Printf("%v) %s\n", i+1, c)
-	}
-}
-
-func programmExit(args ...interface{}) {
-	//TODO: check and close all connections
-	os.Exit(0)
-}
-*/
+}*/
