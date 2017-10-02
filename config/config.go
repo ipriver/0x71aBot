@@ -70,6 +70,10 @@ func (uc *UserConfig) GetChannel() string {
 	return uc.channel
 }
 
+func (uc *UserConfig) SetChannel(channel string) {
+	uc.channel = channel
+}
+
 //loads data into struct
 func (uc *UserConfig) Load() {
 	gc := GlobalConfig{}
