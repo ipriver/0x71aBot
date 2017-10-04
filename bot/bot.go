@@ -3,20 +3,24 @@ package bot
 import (
 	"../commands"
 	"../config"
-	/*"../monitor"
+	"../monitor"
 	"fmt"
 	"net"
 	"strconv"
-	"strings"*/
+	"strings"
+	"sync"
 	"time"
 )
 
-var OnlineBots = make(map[int]*Bot)
+var (
+	OnlineBots = make(map[int]*Bot)
+	err        error
+)
 
 type Bot struct {
 	id           int
 	config       *config.UserConfig
-	commands     []commands.ChatCommand
+	commands     []*commands.ChatCommand
 	upTime       time.Time
 	connection   net.Conn
 	innerChannel chan interface{}
@@ -44,10 +48,18 @@ func (b *Bot) GetUptime() time.Time {
 
 func (b *Bot) Constructor(id int, channel string) {
 	b.id = id
-	conf := &config.UserConfig{}
-	conf.SetChannel(channel)
-	conf.Load()
-	b.config = conf
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		conf := &config.UserConfig{}
+		conf.SetChannel(channel)
+		fmt.Println(conf.GetChannel())
+		conf.Load()
+		b.config = conf
+		fmt.Println(conf)
+		wg.Done()
+	}()
+	wg.Wait()
 }
 
 //function creates connection to Twitch and starts listening to the channel (runs as a goroutine)
@@ -72,19 +84,19 @@ func (b *Bot) StartBot() {
 		b.connection.Close()
 	}()
 	OnlineBots[botId] = b
-	monitor.MonitorChannel(conn, b.Config)
+	monitor.MonitorChannel()
+
+	//monitor.MonitorChannel(conn, b.Config)
 }
 
 //twitch tcp\ip connection
 func (b *Bot) CreateConnection() error {
 	defer func() {
 		if err := recover(); err != nil {
-			fmt.Println("Cannot establish connectoin")
+			fmt.Println("Cannot establish connection")
 			fmt.Println(err)
-			return error
 		}
 	}()
-
 	conf := b.GetConfig()
 	host := conf.GetHost()
 	port := conf.GetPort()
@@ -107,9 +119,6 @@ func (b *Bot) CreateConnection() error {
 	return nil
 }
 
-func (b *Bot) AddCommand() {
-	cm := commands.ChatCommand{}
-	//TODO: custom commands
-	cm.Constructor("exit", func() {}, "None", false, 3000)
-	b.Commands = append(b.Commands, cm)
+func (b *Bot) AddCommand(cm *commands.ChatCommand) {
+	b.commands = append(b.commands, cm)
 }

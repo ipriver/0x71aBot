@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 )
 
+import "fmt"
+
 var configFile string = "config.json"
 var err error
 
@@ -15,26 +17,26 @@ type Configer interface {
 
 //main configuration data structure which is parsed from config.json
 type GlobalConfig struct {
-	hostAddr     string `json:"host"`
-	port         int    `json:"port"`
-	loginBotName string `json:"botName"`
-	logOath      string `json:"oath"`
+	HostAddr     string `json:"host"`
+	Port         int    `json:"port"`
+	LoginBotName string `json:"botName"`
+	LogOath      string `json:"oath"`
 }
 
 func (gc *GlobalConfig) GetHost() string {
-	return gc.hostAddr
+	return gc.HostAddr
 }
 
 func (gc *GlobalConfig) GetPort() int {
-	return gc.port
+	return gc.Port
 }
 
 func (gc *GlobalConfig) GetLoginBotName() string {
-	return gc.loginBotName
+	return gc.LoginBotName
 }
 
 func (gc *GlobalConfig) GetOath() string {
-	return gc.logOath
+	return gc.LogOath
 }
 
 //loads data from config.json into the structure
@@ -63,15 +65,15 @@ func (gc *GlobalConfig) Save() error {
 //structure is used by Bot for creating new Bots stucts
 type UserConfig struct {
 	GlobalConfig
-	channel string `json:"channel"`
+	Channel string `json:"channel"`
 }
 
 func (uc *UserConfig) GetChannel() string {
-	return uc.channel
+	return uc.Channel
 }
 
 func (uc *UserConfig) SetChannel(channel string) {
-	uc.channel = channel
+	uc.Channel = channel
 }
 
 //loads data into struct
@@ -79,4 +81,5 @@ func (uc *UserConfig) Load() {
 	gc := GlobalConfig{}
 	gc.Load()
 	uc.GlobalConfig = gc
+	fmt.Println(gc)
 }

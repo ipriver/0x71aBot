@@ -1,6 +1,6 @@
 package monitor
 
-import (
+/*import (
 	"../config"
 	_ "fmt"
 	"net"
@@ -26,3 +26,4 @@ func LookForCommands(message string, conn net.Conn, conf *config.UserConfig) {
 	}
 
 }
+*/

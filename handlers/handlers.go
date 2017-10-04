@@ -2,12 +2,12 @@ package handlers
 
 import (
 	"../bot"
-	"../commands"
-	"../config"
+	//"../commands"
+	//"../config"
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
+	//"time"
 )
 
 type UserJSONdata struct {
@@ -24,6 +24,9 @@ func RunBotHandler(rw http.ResponseWriter, req *http.Request) {
 		data := UserJSONdata{}
 		err := decoder.Decode(&data)
 
+		if err != nil {
+			panic(err)
+		}
 		//check bot in redis by its id
 		/*bot := checkBotInCache(data.Bot_id)
 		if bot == nil {
@@ -31,17 +34,14 @@ func RunBotHandler(rw http.ResponseWriter, req *http.Request) {
 		}*/
 
 		//creates userconfig from data
-		userConfig, err := config.LoadUserConfig(data.Channel)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
+
 		//creates bot and runs it in a goroutine
-		ch := make(chan interface{})
-		currentTime := time.Now()
-		listOfUserCommands := make([]commands.ChatCommand, 0)
-		newBot := &bot.Bot{data.Bot_id, userConfig, listOfUserCommands, currentTime, ch}
-		newBot.AddCommand()
+		//ch := make(chan interface{})
+		//currentTime := time.Now()
+		//listOfUserCommands := make([]*commands.ChatCommand, 0)
+		fmt.Println(data)
+		newBot := new(bot.Bot)
+		newBot.Constructor(data.Bot_id, data.Channel)
 		go newBot.StartBot()
 		//send to the client response code
 		rw.WriteHeader(200)

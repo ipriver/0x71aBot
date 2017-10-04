@@ -4,13 +4,13 @@ import (
 	"./config"
 	"./handlers"
 	"./monitor"
-	"bufio"
+	//"bufio"
 	"flag"
 	"fmt"
 	"net/http"
-	"os"
-	"strconv"
-	"strings"
+	//"os"
+	//"strconv"
+	//"strings"
 )
 
 var err error
@@ -29,7 +29,7 @@ func main() {
 
 //Upgrades data in config.json
 func UpdateConfig() {
-	scanner := bufio.NewScanner(os.Stdin)
+	/*scanner := bufio.NewScanner(os.Stdin)
 	newconf := config.GlobalConfig{}
 	newconf.Load()
 
@@ -69,7 +69,7 @@ func UpdateConfig() {
 		fmt.Println("Saved")
 	}
 	os.Exit(0)
-
+	*/
 }
 
 //Starts app as Web-Service, resp-req
