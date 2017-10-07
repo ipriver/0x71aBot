@@ -1,19 +1,22 @@
 package config
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
+	"github.com/garyburd/redigo/redis"
+	_ "github.com/lib/pq"
 	"io/ioutil"
 )
 
-import "fmt"
-
-var configFile string = "config.json"
-var err error
+const configFilePath string = "config.json"
 
 type Configer interface {
 	Load()
 	Save() error
 }
+
+var Config *GlobalConfig
 
 //main configuration data structure which is parsed from config.json
 type GlobalConfig struct {
@@ -21,26 +24,38 @@ type GlobalConfig struct {
 	Port         int    `json:"port"`
 	LoginBotName string `json:"botName"`
 	LogOath      string `json:"oath"`
+	Rc           redis.Conn
+	Db           *sql.DB
 }
 
-func (gc *GlobalConfig) GetHost() string {
-	return gc.HostAddr
+func (gc *GlobalConfig) ConnectToSQL() {
+	const (
+		DB_USER = "ipriver"
+		DB_PASS = "root"
+		DB_NAME = "twitch_bot"
+	)
+
+	gc.Db, err = sql.Open("postgres", fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable",
+		DB_USER, DB_PASS, DB_NAME))
+	if err != nil {
+		panic(err)
+	}
 }
 
-func (gc *GlobalConfig) GetPort() int {
-	return gc.Port
+func (gc *GlobalConfig) ConnectToNOSQL() {
+	Rc, err = redis.DialURL("redis://user:@localhost:6379/0")
+	if err != nil {
+		panic(err)
+	}
 }
 
-func (gc *GlobalConfig) GetLoginBotName() string {
-	return gc.LoginBotName
-}
-
-func (gc *GlobalConfig) GetOath() string {
-	return gc.LogOath
-}
-
-//loads data from config.json into the structure
+//loads data from GlobalConfig.json into the structure
 func (gc *GlobalConfig) Load() error {
+	defer func() {
+		if r := recover(); r != nil {
+			err = r.(error)
+		}
+	}()
 	file, err := ioutil.ReadFile(configFile)
 	if err != nil {
 		return err
@@ -49,37 +64,25 @@ func (gc *GlobalConfig) Load() error {
 	if err != nil {
 		return err
 	}
-	return nil
+	gc.ConnectToSQL()
+	gc.ConnectToNOSQL()
+	return err
 }
 
-//saves new data into config.json file
+//saves new data into GlobalConfig.json file
 func (gc *GlobalConfig) Save() error {
 	js, _ := json.Marshal(gc)
-	err = ioutil.WriteFile("config.json", js, 0644)
+	err := ioutil.WriteFile("config.json", js, 0644)
 	if err != nil {
 		return err
 	}
-	return nil
+	return err
 }
 
-//structure is used by Bot for creating new Bots stucts
-type UserConfig struct {
-	GlobalConfig
-	Channel string `json:"channel"`
-}
-
-func (uc *UserConfig) GetChannel() string {
-	return uc.Channel
-}
-
-func (uc *UserConfig) SetChannel(channel string) {
-	uc.Channel = channel
-}
-
-//loads data into struct
-func (uc *UserConfig) Load() {
-	gc := GlobalConfig{}
-	gc.Load()
-	uc.GlobalConfig = gc
-	fmt.Println(gc)
+func init() {
+	Config = new(GlobalConfig)
+	err := Config.Load()
+	if err != nil {
+		panic(err)
+	}
 }
