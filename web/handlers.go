@@ -3,7 +3,6 @@ package web
 import (
 	"../bot"
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -26,42 +25,14 @@ func RunBotHandler(rw http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			panic(err)
 		}
-		//check bot in redis by its id
-		/*bot := checkBotInCache(data.Bot_id)
-		if bot == nil {
-			fmt.Println("no cache")
-		}*/
-
-		//creates userconfig from data
-
-		//creates bot and runs it in a goroutine
-		//ch := make(chan interface{})
-		//currentTime := time.Now()
-		//listOfUserCommands := make([]*commands.ChatCommand, 0)
-		fmt.Println(data)
-		newBot := new(bot.Bot)
-		newBot.Constructor(data.Bot_id, data.Channel)
-		go newBot.StartBot()
-		//send to the client response code
-		rw.WriteHeader(200)
-	default:
-		rw.WriteHeader(404)
-	}
-}
-
-func InfoBotHandler(rw http.ResponseWriter, req *http.Request) {
-	switch req.Method {
-	case "POST":
-		decoder := json.NewDecoder(req.Body)
-		defer req.Body.Close()
-		data := UserJSONdata{}
-		err := decoder.Decode(&data)
+		err = bot.LoadBot(data.Bot_id, data.Channel)
 		if err != nil {
-
+			rw.WriteHeader(500)
+		} else {
+			rw.WriteHeader(200)
 		}
-		/* check in cache, connect to DB, response with bot information; */
-		rw.WriteHeader(200)
+
 	default:
-		rw.WriteHeader(404)
+		rw.WriteHeader(403)
 	}
 }

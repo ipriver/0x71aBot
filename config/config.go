@@ -3,7 +3,7 @@ package config
 import (
 	"database/sql"
 	"encoding/json"
-	"errors"
+	"fmt"
 	"github.com/garyburd/redigo/redis"
 	_ "github.com/lib/pq"
 	"io/ioutil"
@@ -17,6 +17,7 @@ type Configer interface {
 }
 
 var Config *GlobalConfig
+var err error
 
 //main configuration data structure which is parsed from config.json
 type GlobalConfig struct {
@@ -43,7 +44,7 @@ func (gc *GlobalConfig) ConnectToSQL() {
 }
 
 func (gc *GlobalConfig) ConnectToNOSQL() {
-	Rc, err = redis.DialURL("redis://user:@localhost:6379/0")
+	gc.Rc, err = redis.DialURL("redis://user:@localhost:6379/0")
 	if err != nil {
 		panic(err)
 	}
@@ -56,7 +57,7 @@ func (gc *GlobalConfig) Load() error {
 			err = r.(error)
 		}
 	}()
-	file, err := ioutil.ReadFile(configFile)
+	file, err := ioutil.ReadFile(configFilePath)
 	if err != nil {
 		return err
 	}

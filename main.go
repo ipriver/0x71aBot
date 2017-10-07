@@ -1,13 +1,8 @@
 package main
 
 import (
-	//"bufio"
-	"flag"
-	//"fmt"
-	//"os"
-	//"strconv"
-	//"strings"
 	"./web"
+	"flag"
 )
 
 func main() {

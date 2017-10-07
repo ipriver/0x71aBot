@@ -1,12 +1,15 @@
 package bot
 
 import (
+	"../config"
 	"fmt"
+	"net"
+	"strconv"
 	"strings"
 )
 
 func (b *Bot) MonitorChannel() {
-	conn := b.connection
+	conn := b.Conn
 	var buff []byte = make([]byte, 1024)
 	for {
 		rb, _ := conn.Read(buff)
@@ -15,7 +18,14 @@ func (b *Bot) MonitorChannel() {
 		d := strings.Split(bStri, ":")
 		mes := d[len(d)-1]
 		fmt.Println(mes)
-		//LookForCommands(mes, conn, conf)
+		if mes == "hi\r\n" {
+			b.Quit <- true
+		}
+		select {
+		case <-b.Quit:
+			return
+		default:
+		}
 	}
 }
 
@@ -26,24 +36,25 @@ func (b *Bot) CreateConnection() error {
 			fmt.Println(err)
 		}
 	}()
-	conf := b.GetConfig()
-	host := conf.GetHost()
-	port := conf.GetPort()
+	conf := config.Config
+	host := conf.HostAddr
+	port := conf.Port
+	oath := conf.LogOath
+	login := conf.LoginBotName
+	channel := b.Channel
+
 	addr := strings.Join([]string{host, strconv.Itoa(port)}, ":")
 	conn, err := net.Dial("tcp", addr)
 	if err != nil {
 		panic(err)
 	}
 
-	oath := conf.GetOath()
-	login := conf.GetLoginBotName()
-	channel := conf.GetChannel()
 	conn.Write([]byte("PASS " + oath + "\r\n"))
 	conn.Write([]byte("NICK " + login + "\r\n"))
 	conn.Write([]byte("JOIN #" + channel + " \r\n"))
 	if err != nil {
 		panic(err)
 	}
-	b.connection = conn
-	return nil
+	b.Conn = conn
+	return err
 }
