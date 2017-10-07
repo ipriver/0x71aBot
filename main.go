@@ -1,29 +1,22 @@
 package main
 
 import (
-	"./config"
-	"./handlers"
-	"./monitor"
 	//"bufio"
 	"flag"
-	"fmt"
-	"net/http"
+	//"fmt"
 	//"os"
 	//"strconv"
 	//"strings"
+	"./web"
 )
-
-var err error
 
 func main() {
 	flag.Parse()
 	switch flag.Arg(0) {
-	case "start":
-		Start()
 	case "config":
 		UpdateConfig()
 	default:
-		WebService()
+		web.WebService()
 	}
 }
 
@@ -70,32 +63,4 @@ func UpdateConfig() {
 	}
 	os.Exit(0)
 	*/
-}
-
-//Starts app as Web-Service, resp-req
-func WebService() {
-	//listens user input and calls functions
-	go monitor.ListenCMD()
-
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", handlers.RunBotHandler)
-	mux.HandleFunc("/bot_info/", handlers.InfoBotHandler)
-	server := &http.Server{
-		Addr:    "127.0.0.1:8080",
-		Handler: mux,
-	}
-	server.ListenAndServe()
-	//closing connection to DBs
-	defer func() {
-		fmt.Println("closed db connections")
-		config.Rc.Close()
-		config.Db.Close()
-	}()
-}
-
-//Starts one bot gourutine for personal use or debugging
-func Start() {
-	/*userConfig, err := config.LoadUserConfig("ipriver")
-	ch := make(chan interface{})
-	newBot := &bot.Bot{1, userConfig, make([]commands.Command, 10), time.Now(), ch}*/
 }

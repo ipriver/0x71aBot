@@ -3,7 +3,7 @@ package bot
 import (
 	"../commands"
 	"../config"
-	"../monitor"
+	//"../monitor"
 	"fmt"
 	"net"
 	"strconv"
@@ -23,7 +23,8 @@ type Bot struct {
 	commands     []*commands.ChatCommand
 	upTime       time.Time
 	connection   net.Conn
-	innerChannel chan interface{}
+	innerChannel chan string
+	Quit         chan bool
 }
 
 func (b *Bot) GetId() int {
@@ -59,6 +60,8 @@ func (b *Bot) Constructor(id int, channel string) {
 		fmt.Println(conf)
 		wg.Done()
 	}()
+	b.innerChannel = make(chan string)
+	b.Quit = make(chan bool)
 	wg.Wait()
 }
 
@@ -84,7 +87,7 @@ func (b *Bot) StartBot() {
 		b.connection.Close()
 	}()
 	OnlineBots[botId] = b
-	monitor.MonitorChannel()
+	b.MonitorChannel()
 
 	//monitor.MonitorChannel(conn, b.Config)
 }

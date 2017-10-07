@@ -1,13 +1,10 @@
-package handlers
+package web
 
 import (
 	"../bot"
-	//"../commands"
-	//"../config"
 	"encoding/json"
 	"fmt"
 	"net/http"
-	//"time"
 )
 
 type UserJSONdata struct {
@@ -17,10 +14,12 @@ type UserJSONdata struct {
 
 func RunBotHandler(rw http.ResponseWriter, req *http.Request) {
 	switch req.Method {
+
 	case "POST":
 		//parse data from request json
 		decoder := json.NewDecoder(req.Body)
 		defer req.Body.Close()
+
 		data := UserJSONdata{}
 		err := decoder.Decode(&data)
 
