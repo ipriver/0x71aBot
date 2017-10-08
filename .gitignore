@@ -5,6 +5,8 @@
 *.so
 *.dylib
 tst.go
+dump.rdb
+
 # Test binary, build with `go test -c`
 *.test
 

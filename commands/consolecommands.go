@@ -2,28 +2,16 @@ package commands
 
 type ConsoleCommand struct {
 	Command
-	description string
-	arguments   []string
+	Description string
+	Arguments   []string
 }
 
-type ConsoleCommander interface {
-	Call()
-	GetDescr() string
-	GetArguments() []string
-}
-
-func (c *ConsoleCommand) GetDescr() string {
-	return c.description
-}
-
-func (c *ConsoleCommand) GetArguments() []string {
-	return c.arguments
-}
-
-func (c *ConsoleCommand) Constructor(name string, f interface{}, descr string, args []string) {
-	c.Command.Constructor(name, f)
-	c.description = descr
-	c.arguments = args
+func Constructor(name string, f interface{}, descr string, args []string) *ConsoleCommand {
+	c := new(ConsoleCommand)
+	c.Command = *NewCommand(name, f)
+	c.Description = descr
+	c.Arguments = args
+	return c
 }
 
 /*

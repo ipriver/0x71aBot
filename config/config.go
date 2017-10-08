@@ -21,12 +21,12 @@ var err error
 
 //main configuration data structure which is parsed from config.json
 type GlobalConfig struct {
-	HostAddr     string `json:"host"`
-	Port         int    `json:"port"`
-	LoginBotName string `json:"botName"`
-	LogOath      string `json:"oath"`
-	Rc           redis.Conn
-	Db           *sql.DB
+	HostAddr     string     `json:"host"`
+	Port         int        `json:"port"`
+	LoginBotName string     `json:"botName"`
+	LogOath      string     `json:"oath"`
+	Rc           redis.Conn `json:"-"`
+	Db           *sql.DB    `json:"-"`
 }
 
 func (gc *GlobalConfig) ConnectToSQL() {

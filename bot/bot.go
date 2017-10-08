@@ -17,6 +17,7 @@ type Bot struct {
 	Commands []*commands.ChatCommand
 	UpTime   time.Time
 	Conn     net.Conn
+	CMchan   chan string
 	Quit     chan bool
 }
 
@@ -25,6 +26,7 @@ func Constructor(id int, channel string) *Bot {
 	b.Id = id
 	b.Channel = channel
 	b.Commands = make([]*commands.ChatCommand, 0)
+	b.CMchan = make(chan string)
 	b.Quit = make(chan bool)
 	return b
 }

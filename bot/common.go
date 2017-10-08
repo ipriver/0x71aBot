@@ -1,6 +1,7 @@
 package bot
 
 import (
+	//	"../commands"
 	"errors"
 )
 
@@ -14,3 +15,7 @@ func LoadBot(id int, channel string) error {
 	err := b.Start()
 	return err
 }
+
+/*func defaultChatCommands() *commands.ChatCommand {
+	cm := commands.NewChatCommand("hi")
+}*/

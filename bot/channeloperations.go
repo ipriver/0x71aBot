@@ -8,27 +8,6 @@ import (
 	"strings"
 )
 
-func (b *Bot) MonitorChannel() {
-	conn := b.Conn
-	var buff []byte = make([]byte, 1024)
-	for {
-		rb, _ := conn.Read(buff)
-		bStri := string(buff[:rb])
-		fmt.Println(bStri)
-		d := strings.Split(bStri, ":")
-		mes := d[len(d)-1]
-		fmt.Println(mes)
-		if mes == "hi\r\n" {
-			b.Quit <- true
-		}
-		select {
-		case <-b.Quit:
-			return
-		default:
-		}
-	}
-}
-
 func (b *Bot) CreateConnection() error {
 	defer func() {
 		if err := recover(); err != nil {
@@ -36,6 +15,7 @@ func (b *Bot) CreateConnection() error {
 			fmt.Println(err)
 		}
 	}()
+
 	conf := config.Config
 	host := conf.HostAddr
 	port := conf.Port
@@ -57,4 +37,41 @@ func (b *Bot) CreateConnection() error {
 	}
 	b.Conn = conn
 	return err
+}
+
+func (b *Bot) MonitorChannel() {
+	var buff []byte = make([]byte, 1024)
+	for {
+		ReadBuffer(b.Conn, buff, b.CMchan)
+
+		select {
+		case resp := <-b.CMchan:
+			b.Conn.Write([]byte("PRIVMSG #" + b.Channel + " : " + resp))
+		case <-b.Quit:
+			b.Kill()
+			return
+		default:
+		}
+	}
+}
+
+func ReadBuffer(conn net.Conn, buff []byte, rcChan chan string) {
+	//fmt.Println("BUFFER: ", buff)
+	rb, _ := conn.Read(buff)
+	bStri := string(buff[:rb])
+	fmt.Println("bSTRINNG: ", bStri)
+
+	d := strings.Split(bStri, ":")
+	mes := d[len(d)-1]
+	go ReadMessage(mes, rcChan)
+}
+
+func ReadMessage(mes string, rcChan chan string) {
+	defer func() {
+		recover()
+	}()
+	if true {
+		rcChan <- mes
+	}
+	fmt.Println("MESSAGE: ", mes)
 }

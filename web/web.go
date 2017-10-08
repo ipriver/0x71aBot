@@ -5,6 +5,8 @@ import (
 )
 
 func WebService() {
+	//consoleCM := make(chan string)
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", RunBotHandler)
 	server := &http.Server{

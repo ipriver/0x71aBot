@@ -6,52 +6,35 @@ import (
 
 type ChatCommand struct {
 	Command
-	message    string
-	privMSG    bool
-	onCooldown bool
-	cdTime     int
+	Message    string
+	PrivMSG    bool
+	OnCooldown bool
+	CdTime     int
 }
 
-type ChatCommander interface {
-	SetCooldown()
-	IsOnCooldown() bool
-	GetMessage() string
-	Call()
-}
-
-func (c *ChatCommand) setCooldown() {
-	c.onCooldown = true
+func (c *ChatCommand) SetCooldown() {
+	c.OnCooldown = true
 	go func() {
-		time.Sleep(time.Duration(c.cdTime) * time.Millisecond)
-		c.onCooldown = false
+		time.Sleep(time.Duration(c.CdTime) * time.Millisecond)
+		c.OnCooldown = false
 	}()
 }
 
-func (c *ChatCommand) IsOnCooldown() bool {
-	return c.onCooldown
-}
-
-func (c *ChatCommand) IsPrivate() bool {
-	return c.privMSG
-}
-
-func (c *ChatCommand) GetMessage() string {
-	return c.message
-}
-
-func (c *ChatCommand) Constructor(name string, f interface{}, mes string, privmsg bool, cd int) {
-	c.Command.Constructor(name, f)
-	c.message = mes
-	c.privMSG = privmsg
-	c.onCooldown = false
-	c.cdTime = cd
+func NewChatCommand(name string, f interface{}, mes string, privmsg bool, cd int) *ChatCommand {
+	c := new(ChatCommand)
+	c.Command = *NewCommand(name, f)
+	c.Message = mes
+	c.PrivMSG = privmsg
+	c.OnCooldown = false
+	c.CdTime = cd
+	return c
 }
 
 func (c *ChatCommand) Call() {
-	if c.onCooldown == true {
+	if c.OnCooldown == true {
 		return
 	}
-	c.setCooldown()
+	c.SetCooldown()
 	c.Command.Call()
 }
 
